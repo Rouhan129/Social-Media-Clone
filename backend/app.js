@@ -1,9 +1,14 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
+import path from "path"
+import { fileURLToPath } from "url"
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/auth.js"
+import postRoutes from "./src/routes/postRoutes.js"
 
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 dotenv.config()
 connectDB();
@@ -17,6 +22,8 @@ app.use(cors({
 
 app.use(express.json())
 
+app.use('/uploads', express.static(path.join(dirname, 'public')))
+
 
 app.get("/", (req, res) => {
     res.send("Testing Route")
@@ -24,6 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes)
 
+app.use('/api/post', postRoutes)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

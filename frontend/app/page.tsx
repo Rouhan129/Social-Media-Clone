@@ -1,6 +1,7 @@
 "use client"
 
 // import { redirect } from "next/navigation";
+import PostForm from "./components/postForm";
 
 export default function Home() {
 
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="flex flex-col items-center gap-3 mt-5">
       <h1>Welcome</h1>
       <p>You are logged in!</p>
+      <PostForm />
       <button onClick={() => {localStorage.clear(); window.location.href = '/login'}} className="bg-gray-600 text-white rounded-sm p-4 hover:bg-gray-400 cursor-pointer">Logout</button>
     </main>
   );
