@@ -4,10 +4,14 @@ import cors from "cors"
 import path from "path"
 import { fileURLToPath } from "url"
 import connectDB from "./src/config/db.js"
+
+// Routes Imports
 import authRoutes from "./src/routes/auth.js"
 import postRoutes from "./src/routes/postRoutes.js"
 import commentRoutes from "./src/routes/commentRoutes.js"
 import likeRoutes from "./src/routes/likeRoutes.js"
+import followRoutes from "./src/routes/followRoutes.js"
+import userRoutes from "./src/routes/userRoutes.js"
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -35,6 +39,8 @@ app.use("/api/auth", authRoutes)
 app.use("/api/post", postRoutes)
 app.use("/api/comment", commentRoutes)
 app.use("/api/like", likeRoutes)
+app.use("/api/follow", followRoutes)
+app.use('/api/user', userRoutes)
 
 const PORT = process.env.PORT
 

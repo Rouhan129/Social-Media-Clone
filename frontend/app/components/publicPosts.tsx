@@ -129,9 +129,20 @@ export default function PublicPosts() {
                         <h3 className="font-semibold">Comments</h3>
                         {post.comments.length > 0 ? (
                             post.comments.map((comment) => (
-                                <div key={comment._id} className="p-2 border-b">
+                                <div key={comment._id} className="p-2 shadow-md mb-3 rounded-sm">
                                     <p className="text-sm text-gray-600">{comment.userId.email}</p>
                                     <p>{comment.text}</p>
+                                    <form>
+                                        <textarea
+                                            placeholder="Write a comment..."
+                                            rows={2}
+                                            className="w-full p-2 rounded bg-white border border-gray-400"
+                                            value={commentData[post._id] || ""}
+                                            onChange={(e) =>
+                                                setCommentData((prev) => ({ ...prev, [post._id]: e.target.value }))
+                                            }
+                                        />
+                                    </form>
                                 </div>
                             ))
                         ) : (

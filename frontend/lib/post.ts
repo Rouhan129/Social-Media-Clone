@@ -94,3 +94,49 @@ export const getLikesForPost = async (postId: string) => {
         throw error;
     }
 };
+
+export const getFollow = async (userId: string) => {
+    const token = localStorage.getItem("accessToken");
+    try {
+        const res = await fetch(`${API_URL}/user/follow/${userId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        if (!res.ok) throw new Error("Failed to get follow status");
+        return res.json()
+    }catch(error) {
+        console.error("Error fetching status:", error);
+        throw error;
+    }
+}
+
+export const toggleFollow = async (userId: string) => {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch(`${API_URL}/user/follow/${userId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+    });
+
+    if (!res.ok) throw new Error("Failed to follow/unfollow post");
+    return res.json();
+};
+
+export const getUserPosts = async (userId: string) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await fetch(`${API_URL}/user/${userId}/post`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch user's posts");
+  return res.json();
+};

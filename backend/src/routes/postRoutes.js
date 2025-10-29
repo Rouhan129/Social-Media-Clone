@@ -2,6 +2,7 @@ import express from "express"
 import Post from "../models/Post.js"
 import Comment from "../models/Comment.js"
 import upload from "../middleware/upload.js"
+import Follow from "../models/Follow.js";
 import { protect } from "../middleware/auth.js"
 
 const router = express.Router()
@@ -57,5 +58,25 @@ router.get('/all', protect, async (req, res) => {
         res.status(400).json({message: error.message})
     }
 })
+
+// Feed Route
+router.get("/feed", protect, async (req, res) => {
+  try {
+    // find all users current user is following
+    const followingUsers = await Follow.find({ followerId: req.user._id }).select("followingId");
+
+    const ids = followingUsers.map(f => f.followingId);
+
+    // fetch posts from followed users
+    const posts = await Post.find({ user: { $in: ids } })
+      .populate("user", "email")
+      .populate({ path: "comments", populate: { path: "userId", select: "email" } });
+
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to load feed" });
+  }
+});
+
 
 export default router
