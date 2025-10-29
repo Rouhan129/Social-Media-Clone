@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "./Input";
 import ImageUpload from "./ImageUpload";
 import { createPost } from "@/lib/post";
+import Button from "./Button";
 
 export default function PostForm() {
   const [title, setTitle] = useState("");
@@ -36,29 +37,28 @@ export default function PostForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
-      <Input
-        label="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        error={errors.title}
-      />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full bg-white p-6 rounded-lg shadow-lg">
+        <Input
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          error={errors.title}
+        />
 
-      <Input
-        label="Description"
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
-        error={errors.desc}
-      />
+        <Input
+          label="Description"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          error={errors.desc}
+        />
 
-      <ImageUpload onFileChange={(file) => setImage(file)} />
+        <ImageUpload onFileChange={(file) => setImage(file)} />
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-      >
-        Submit
-      </button>
-    </form>
+        <Button
+          type="submit"
+        >
+          Submit
+        </Button>
+      </form>
   );
 }

@@ -14,3 +14,9 @@ export interface CreatePostFormData {
 export interface Error {
     message: string
 }
+
+export interface CreateCommentPayload {
+  postId: string;
+  text: string;
+  parentComment?: string | null;
+}

@@ -1,10 +1,12 @@
-import { Post } from "@/app/types/post";
+import { Post, CreateCommentPayload } from "@/app/types/post";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const createPost = async (formData: FormData): Promise<Post> => {
+    const token = localStorage.getItem("accessToken")
     const res = await fetch(`${API_URL}/post`, {
         method: 'POST',
+        headers: {Authorization: `Bearer ${token}`},
         body: formData
     })
 
@@ -16,7 +18,10 @@ export const createPost = async (formData: FormData): Promise<Post> => {
 }
 
 export const getPosts = async (): Promise<Post[]> => {
-    const res = await fetch(`${API_URL}/post`)
+    const token = localStorage.getItem("accessToken")
+    const res = await fetch(`${API_URL}/post`, {
+        headers: {Authorization: `Bearer ${token}`}
+    })
 
     if (!res.ok){
         throw new Error("Unable to get posts.")
@@ -24,3 +29,36 @@ export const getPosts = async (): Promise<Post[]> => {
 
     return res.json()
 }
+
+export const getAllPosts = async (): Promise<Post[]> => {
+    const token = localStorage.getItem("accessToken")
+    const res = await fetch(`${API_URL}/post/all`, {
+        headers: {Authorization: `Bearer ${token}`}
+    })
+
+    if (!res.ok){
+        throw new Error("Unable to get posts.")
+    }
+
+    return res.json()
+}
+
+export const postComment = async (comment: CreateCommentPayload) => {
+  const token = localStorage.getItem("accessToken");
+
+  const res = await fetch(`${API_URL}/comment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(comment),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to create comment!");
+  }
+
+  return res.json();
+};

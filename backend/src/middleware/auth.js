@@ -1,4 +1,4 @@
-import { verifyToken } from "../utils/generateToken";
+import { verifyToken } from "../utils/generateToken.js";
 
 export const protect = async (req, res, next) => {
     const authHeader = req.headers.authorization;

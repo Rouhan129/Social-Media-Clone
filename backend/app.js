@@ -3,37 +3,40 @@ import dotenv from "dotenv"
 import cors from "cors"
 import path from "path"
 import { fileURLToPath } from "url"
-import connectDB from "./src/config/db.js";
+import connectDB from "./src/config/db.js"
 import authRoutes from "./src/routes/auth.js"
 import postRoutes from "./src/routes/postRoutes.js"
+import commentRoutes from "./src/routes/commentRoutes.js"
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config()
-connectDB();
+connectDB()
 
 const app = express()
 
 app.use(cors({
-    origin: "http://localhost:3000",
-    credentials: true
+  origin: "http://localhost:3000",
+  credentials: true
 }))
 
 app.use(express.json())
 
-app.use('/uploads', express.static(path.join(dirname, 'public')))
-
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')))
 
 app.get("/", (req, res) => {
-    res.send("Testing Route")
+  res.send("Testing Route")
 })
 
 app.use("/api/auth", authRoutes)
-
-app.use('/api/post', postRoutes)
+app.use("/api/post", postRoutes)
+app.use("/api/comment", commentRoutes)
 
 const PORT = process.env.PORT
+
+
 app.listen(PORT, () => {
-    console.log(`Server running at port: ${PORT}`)
+  console.log(`Server running at port: ${PORT}`)
 })
