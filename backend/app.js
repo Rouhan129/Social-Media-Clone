@@ -7,6 +7,7 @@ import connectDB from "./src/config/db.js"
 import authRoutes from "./src/routes/auth.js"
 import postRoutes from "./src/routes/postRoutes.js"
 import commentRoutes from "./src/routes/commentRoutes.js"
+import likeRoutes from "./src/routes/likeRoutes.js"
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes)
 app.use("/api/post", postRoutes)
 app.use("/api/comment", commentRoutes)
+app.use("/api/like", likeRoutes)
 
 const PORT = process.env.PORT
 

@@ -62,3 +62,35 @@ export const postComment = async (comment: CreateCommentPayload) => {
 
   return res.json();
 };
+
+export const toggleLike = async (postId: string) => {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch(`${API_URL}/like`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ postId })
+    });
+
+    if (!res.ok) throw new Error("Failed to like/unlike post");
+    return res.json();
+};
+
+export const getLikesForPost = async (postId: string) => {
+    try {
+        const res = await fetch(`${API_URL}/like/${postId}`, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch likes");
+        }
+
+        return await res.json(); // { postId, likes }
+    } catch (error) {
+        console.error("Error fetching likes:", error);
+        throw error;
+    }
+};

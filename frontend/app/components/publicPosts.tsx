@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllPosts, postComment } from "@/lib/post";
+import { getAllPosts, postComment, toggleLike, getLikesForPost } from "@/lib/post";
 import Button from "../components/Button";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +25,8 @@ interface Post {
     image: string;
     user: User;
     comments: Comment[];
+    likes: number;
+    isLikedByUser?: boolean;
 }
 
 export default function PublicPosts() {
@@ -36,37 +38,53 @@ export default function PublicPosts() {
 
     const handleComment = async (e: React.FormEvent, postId: string) => {
         e.preventDefault();
-
         const text = commentData[postId];
         if (!text) return;
 
         try {
-            await postComment({
-                postId,
-                text,
-                parentComment: null,
-            });
-
+            await postComment({ postId, text, parentComment: null });
             const posts = await getAllPosts();
             setData(posts);
-
             setCommentData((prev) => ({ ...prev, [postId]: "" }));
         } catch (err) {
             console.error("Failed to post comment", err);
         }
     };
 
+    const handleLike = async (postId: string) => {
+        try {
+            await toggleLike(postId);
+            const posts = await getAllPosts();
+            setData(posts);
+        } catch (err) {
+            console.error("Failed to toggle like", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchPostsWithLikes = async () => {
             try {
                 const posts = await getAllPosts();
-                setData(posts);
+
+                const postsWithLikes = await Promise.all(
+                    posts.map(async (post) => {
+                        const likeData = await getLikesForPost(post._id);
+                        return {
+                            ...post,
+                            likes: likeData.likes || 0,
+                            isLikedByUser: likeData.isLikedByUser || false
+                        };
+                    })
+                );
+
+                setData(postsWithLikes);
             } catch (err) {
-                setError("Failed to load posts");
+                console.error(err);
+                setError("Failed to load posts with likes");
             }
         };
 
-        fetchPosts();
+        fetchPostsWithLikes();
     }, []);
 
     if (error) return <div className="text-red-600 font-bold">ERROR!</div>;
@@ -75,30 +93,29 @@ export default function PublicPosts() {
         <div className="flex flex-col items-center mt-5 gap-2">
             <span className="text-black">Public POSTS</span>
             {data.map((post) => (
-                <div key={post._id} className="flex w-[100%] bg-gray-300 p-2 rounded-md gap-2">
-                    {/* Left Section */}
-                    <div className="w-[50%] bg-gray-300 p-2 rounded-md">
-                        <div><span className="font-semibold">Title: </span>{post.title}</div>
-                        <div><span className="font-semibold">Description: </span>{post.desc}</div>
+                <div key={post._id} className="flex w-full bg-gray-300 p-2 rounded-md gap-2">
+                    <div className="w-1/2 p-2">
+                        <h2 className="font-bold">{post.title}</h2>
+                        <p>{post.desc}</p>
+                        <img src={`http://localhost:5000/${post.image}`} alt={post.title} className="mt-2 rounded" />
 
-                        <img
-                            src={`http://localhost:5000/${post.image}`}
-                            alt={post.title}
-                            width={300}
-                            height={500}
-                            className="mt-2 rounded"
-                        />
+                        <p className="text-red-500 mt-2">
+                            <span className="font-semibold">User: </span>
+                            {post.user?.email}
+                        </p>
 
-                        <div className="text-red-500 mt-2">
-                            <span className="font-semibold">User: </span>{post.user?.email || "Unknown"}
-                        </div>
+                        <button
+                            onClick={() => handleLike(post._id)}
+                            className="mt-2 px-3 py-1 bg-blue-500 text-white rounded"
+                        >
+                            {post.isLikedByUser ? "Unlike" : "Like"} ({post.likes})
+                        </button>
 
                         <form onSubmit={(e) => handleComment(e, post._id)} className="mt-2">
                             <textarea
-                                name="comment"
                                 placeholder="Write a comment..."
                                 rows={2}
-                                className="bg-white text-black w-full rounded-sm p-2"
+                                className="w-full p-2 rounded bg-white"
                                 value={commentData[post._id] || ""}
                                 onChange={(e) =>
                                     setCommentData((prev) => ({ ...prev, [post._id]: e.target.value }))
@@ -108,27 +125,21 @@ export default function PublicPosts() {
                         </form>
                     </div>
 
-                    <div className="w-[50%] bg-white p-2 rounded-md">
-                        <h3 className="font-semibold mb-2 text-black">Comments</h3>
+                    <div className="w-1/2 bg-white p-2 rounded">
+                        <h3 className="font-semibold">Comments</h3>
                         {post.comments.length > 0 ? (
                             post.comments.map((comment) => (
-                                <div key={comment._id} className="p-2 shadow-sm">
-                                    <div className="text-sm text-gray-600">
-                                        {comment.userId?.email || "Unknown User"}
-                                    </div>
-                                    <div className="text-black">{comment.text}</div>
+                                <div key={comment._id} className="p-2 border-b">
+                                    <p className="text-sm text-gray-600">{comment.userId.email}</p>
+                                    <p>{comment.text}</p>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-gray-500">No comments yet</p>
+                            <p>No comments yet</p>
                         )}
                     </div>
                 </div>
             ))}
-
-            <div className="w-[5%] absolute top-4 left-4">
-                <Button onClick={() => router.push("/")}>Home</Button>
-            </div>
         </div>
     );
 }
