@@ -55,6 +55,10 @@ export default function Home() {
         <Button onClick={() => setModal(true)}>Upload</Button>
       </div>
 
+      <div className="w-[8%] absolute top-4 right-32">
+        <Button onClick={() => router.push("/messages")}>Messages</Button>
+      </div>
+
       <p>You are logged in!</p>
 
       {modal && (

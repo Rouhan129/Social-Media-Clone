@@ -37,9 +37,10 @@ export const useAuth = () => {
     }
   };
 
-  const saveTokens = ({ accessToken, refreshToken }: AuthResponse) => {
+  const saveTokens = ({ accessToken, refreshToken, userId }: AuthResponse) => {
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("id", userId);
   };
 
   const logout = () => {

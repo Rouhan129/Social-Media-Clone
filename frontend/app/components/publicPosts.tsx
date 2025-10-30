@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllPosts, postComment, toggleLike, getLikesForPost } from "@/lib/post";
+import { feedPosts, postComment, toggleLike, getLikesForPost } from "@/lib/post";
 import Button from "../components/Button";
 import { useRouter } from "next/navigation";
 
@@ -43,7 +43,7 @@ export default function PublicPosts() {
 
         try {
             await postComment({ postId, text, parentComment: null });
-            const posts = await getAllPosts();
+            const posts = await feedPosts();
             setData(posts);
             setCommentData((prev) => ({ ...prev, [postId]: "" }));
         } catch (err) {
@@ -54,7 +54,7 @@ export default function PublicPosts() {
     const handleLike = async (postId: string) => {
         try {
             await toggleLike(postId);
-            const posts = await getAllPosts();
+            const posts = await feedPosts();
             setData(posts);
         } catch (err) {
             console.error("Failed to toggle like", err);
@@ -64,7 +64,7 @@ export default function PublicPosts() {
     useEffect(() => {
         const fetchPostsWithLikes = async () => {
             try {
-                const posts = await getAllPosts();
+                const posts = await feedPosts();
 
                 const postsWithLikes = await Promise.all(
                     posts.map(async (post) => {

@@ -6,7 +6,7 @@ export const createPost = async (formData: FormData): Promise<Post> => {
     const token = localStorage.getItem("accessToken")
     const res = await fetch(`${API_URL}/post`, {
         method: 'POST',
-        headers: {Authorization: `Bearer ${token}`},
+        headers: { Authorization: `Bearer ${token}` },
         body: formData
     })
 
@@ -20,10 +20,10 @@ export const createPost = async (formData: FormData): Promise<Post> => {
 export const getPosts = async (): Promise<Post[]> => {
     const token = localStorage.getItem("accessToken")
     const res = await fetch(`${API_URL}/post`, {
-        headers: {Authorization: `Bearer ${token}`}
+        headers: { Authorization: `Bearer ${token}` }
     })
 
-    if (!res.ok){
+    if (!res.ok) {
         throw new Error("Unable to get posts.")
     }
 
@@ -33,10 +33,10 @@ export const getPosts = async (): Promise<Post[]> => {
 export const getAllPosts = async (): Promise<Post[]> => {
     const token = localStorage.getItem("accessToken")
     const res = await fetch(`${API_URL}/post/all`, {
-        headers: {Authorization: `Bearer ${token}`}
+        headers: { Authorization: `Bearer ${token}` }
     })
 
-    if (!res.ok){
+    if (!res.ok) {
         throw new Error("Unable to get posts.")
     }
 
@@ -44,23 +44,23 @@ export const getAllPosts = async (): Promise<Post[]> => {
 }
 
 export const postComment = async (comment: CreateCommentPayload) => {
-  const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-  const res = await fetch(`${API_URL}/comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(comment),
-  });
+    const res = await fetch(`${API_URL}/comment`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(comment),
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Failed to create comment!");
-  }
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to create comment!");
+    }
 
-  return res.json();
+    return res.json();
 };
 
 export const toggleLike = async (postId: string) => {
@@ -108,7 +108,7 @@ export const getFollow = async (userId: string) => {
 
         if (!res.ok) throw new Error("Failed to get follow status");
         return res.json()
-    }catch(error) {
+    } catch (error) {
         console.error("Error fetching status:", error);
         throw error;
     }
@@ -129,14 +129,27 @@ export const toggleFollow = async (userId: string) => {
 };
 
 export const getUserPosts = async (userId: string) => {
-  const token = localStorage.getItem("accessToken");
-  const res = await fetch(`${API_URL}/user/${userId}/post`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch(`${API_URL}/user/${userId}/post`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
-  if (!res.ok) throw new Error("Failed to fetch user's posts");
-  return res.json();
+    if (!res.ok) throw new Error("Failed to fetch user's posts");
+    return res.json();
 };
+
+export const feedPosts = async () => {
+    const token = localStorage.getItem("accessToken")
+    const res = await fetch(`${API_URL}/user/feed`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+
+    if (!res.ok) throw new Error("Failed to fetch posts")
+        return res.json()
+}

@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
     user.refreshToken = refreshToken
     await user.save()
 
-    res.json({accessToken, refreshToken})
+    res.json({accessToken, refreshToken, userId: user._id})
 })
 
 router.post("/login", async (req, res) => {
@@ -49,7 +49,7 @@ router.post("/login", async (req, res) => {
     user.refreshToken = refreshToken
     user.save()
 
-    res.json({ accessToken, refreshToken });
+    res.json({ accessToken, refreshToken, userId: user._id });
 })
 
 

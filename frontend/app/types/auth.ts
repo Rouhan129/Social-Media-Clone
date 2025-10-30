@@ -3,6 +3,7 @@ export type Role = "user" | "admin";
 export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
+    userId: string;
 }
 
 export interface LoginCredentials {
