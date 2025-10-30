@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import {  getPosts } from "@/lib/post";
 import Button from "../components/Button";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 
 export default function UserPage() {
+  const params = useParams()
+  const id = params.id;
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
@@ -25,7 +28,7 @@ export default function UserPage() {
     };
 
     fetchUserData();
-  }, []);
+  }, [id]);
 
   if (error) return <div className="text-red-600 font-bold">{error}</div>;
 

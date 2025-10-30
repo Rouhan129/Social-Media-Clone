@@ -55,15 +55,32 @@ router.get('/following', protect, async (req, res) => {
 
 // Get user data
 router.get('/:id', async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id)
-        if (!user) return res.status(404).json({ message: "User not found!" });
-        res.json(user)
-    } catch (err) {
-        console.log("Error: ", err)
-        res.status(500).json({ message: "Something went wrong!" })
-    }
-})
+  try {
+    const userId = req.params.id;
+
+    // Find user with limited fields
+    const user = await User.findById(userId).select("_id email role");
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+
+    const [postCount, followerCount, followingCount] = await Promise.all([
+      Post.countDocuments({ user: userId }),
+      Follow.countDocuments({ followingId: userId }),
+      Follow.countDocuments({ followerId: userId }),
+    ]);
+
+    // Respond with combined data
+    res.json({
+      ...user.toObject(),
+      postCount,
+      followerCount,
+      followingCount,
+    });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Something went wrong!" });
+  }
+});
 
 // Get posts by user id
 router.get('/:id/post', async (req, res) => {
