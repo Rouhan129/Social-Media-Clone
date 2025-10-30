@@ -55,8 +55,8 @@ export default function Home() {
         <Button onClick={() => setModal(true)}>Upload</Button>
       </div>
 
-      <div className="w-[8%] absolute top-4 right-32">
-        <Button onClick={() => router.push("/messages")}>Messages</Button>
+      <div className="w-[8%] absolute top-26 left-4 z-10">
+        <Button onClick={() => router.push('/users')}>Users</Button>
       </div>
 
       <p>You are logged in!</p>
@@ -74,6 +74,10 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <div className="w-[8%] absolute top-4 right-32">
+        <Button onClick={() => router.push("/messages")}>Messages</Button>
+      </div>
 
       <div className="w-[5%] absolute top-4 right-4">
         <Button

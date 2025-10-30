@@ -36,6 +36,19 @@ router.get('/feed', protect, async (req, res) => {
     }
 })
 
+router.get('/all', async (req, res) => {
+    try {
+        const users = await User.find().select("_id email role").lean()
+
+        if (!users) return res.status(400).json({message: "No users found!"});
+
+        res.status(200).json(users)
+    }catch(error){
+        console.log("Error: ", error)
+        res.status(500).json({message: "Something went wrong."})
+    }
+})
+
 // get followed users
 router.get('/following', protect, async (req, res) => {
   try {
@@ -49,6 +62,27 @@ router.get('/following', protect, async (req, res) => {
   } catch (err) {
     console.error("Error fetching followed users:", err);
     res.status(500).json({ message: "Failed to fetch followed users" });
+  }
+});
+
+// update user data
+router.put('/:id/email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { email },
+      { new: true, select: "_id email role" }
+    );
+
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error("Error updating email:", err);
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
