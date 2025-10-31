@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/:userId", protect, async (req, res) => {
   try {
     const { userId } = req.params;
-    const followerId = req.user._id;
+    const followerId = req.user.id;
 
     if (followerId.toString() === userId) {
       return res.status(400).json({ message: "You can't follow yourself" });
@@ -26,7 +26,7 @@ router.post("/:userId", protect, async (req, res) => {
 router.delete("/:userId", protect, async (req, res) => {
   try {
     const { userId } = req.params;
-    const followerId = req.user._id;
+    const followerId = req.user.id;
 
     await Follow.findOneAndDelete({ followerId, followingId: userId });
     res.json({ message: "Unfollowed successfully" });

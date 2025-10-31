@@ -151,5 +151,22 @@ export const feedPosts = async () => {
     })
 
     if (!res.ok) throw new Error("Failed to fetch posts")
-        return res.json()
+    return res.json()
 }
+
+export const deleteComment = async (id: string) => {
+    const token = localStorage.getItem("accessToken")
+    const res = await fetch(`${API_URL}/comment/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to delete comment");
+    }
+
+    return res.json();
+};
+

@@ -20,7 +20,9 @@ router.get('/feed', protect, async (req, res) => {
 
     const followerIds = followingUsers.map(user => user.followingId)
 
-    const posts = await Post.find({ user: { $in: followerIds } }).sort({ createdAt: -1 }).populate('user', 'email')
+    const visibleUsers = [...followerIds, req.user.id]
+
+    const posts = await Post.find({ user: { $in: visibleUsers } }).sort({ createdAt: -1 }).populate('user', 'email')
 
     const postWithComments = await Promise.all(
       posts.map(async (post) => {
@@ -28,7 +30,7 @@ router.get('/feed', protect, async (req, res) => {
         const likesCount = await Like.countDocuments({ postId: post._id })
         const userLiked = await Like.exists({ postId: post._id, userId: req.user.id })
 
-        return { ...post.toObject(), comments, likes: likesCount, isLikedByUser: userLiked }
+        return { ...post.toObject(), comments, likes: likesCount, isLikedByUser: userLiked, isOwnPost: post.user._id.toString() === req.user.id }
       })
     )
 

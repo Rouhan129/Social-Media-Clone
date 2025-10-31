@@ -29,5 +29,23 @@ router.post("/", protect, async (req, res) => {
   }
 });
 
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const comment = await Comment.findById(id);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    await Comment.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    res.status(400).json({ message: "Something went wrong!" });
+  }
+});
+
 
 export default router
