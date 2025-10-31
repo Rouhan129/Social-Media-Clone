@@ -9,7 +9,7 @@ export default function Button({ children, loading, ...props }: ButtonProps) {
     <button
       {...props}
       disabled={loading || props.disabled}
-      className={`w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition cursor-pointer ${
+      className={`w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition cursor-pointer shadow-lg ${
         loading || props.disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >

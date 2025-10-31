@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getUsers } from "@/lib/user";
 import { useRouter } from "next/navigation";
+import { FaUserGroup } from "react-icons/fa6";
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
@@ -23,9 +24,13 @@ const UserPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Users
-      </h1>
+      <div className="flex flex-col items-center mb-10">
+        <div className="flex items-center justify-center gap-3 text-blue-600">
+          <FaUserGroup size={30} />
+          <h1 className="text-3xl font-bold text-gray-800">Users</h1>
+        </div>
+        <div className="w-24 h-[3px] bg-blue-500 mt-3 rounded-full"></div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {users.map((user) => (
@@ -42,7 +47,7 @@ const UserPage = () => {
                 {user.email}
               </div>
               <div className="text-sm text-gray-500 mt-1">
-                Role: <span className="font-semibold">{user.role}</span>
+                Role: <span className="font-semibold text-blue-600">{user.role}</span>
               </div>
             </div>
           </div>

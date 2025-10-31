@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center gap-3 mt-5">
-      <div className="w-[8%] absolute top-4 left-4 z-10">
+      {/* <div className="w-[8%] absolute top-4 left-4 z-10">
         <Button onClick={() => router.push("/user")}>See My Posts</Button>
       </div>
 
@@ -57,9 +57,7 @@ export default function Home() {
 
       <div className="w-[8%] absolute top-26 left-4 z-10">
         <Button onClick={() => router.push('/users')}>Users</Button>
-      </div>
-
-      <p>You are logged in!</p>
+      </div> */}
 
       {modal && (
         <div
@@ -75,11 +73,11 @@ export default function Home() {
         </div>
       )}
 
-      <div className="w-[8%] absolute top-4 right-32">
+      {/* <div className="w-[8%] absolute top-4 right-32">
         <Button onClick={() => router.push("/messages")}>Messages</Button>
-      </div>
+      </div> */}
 
-      <div className="w-[5%] absolute top-4 right-4">
+      {/* <div className="w-[5%] absolute top-4 right-4">
         <Button
           onClick={() => {
             localStorage.clear();
@@ -89,7 +87,7 @@ export default function Home() {
         >
           Logout
         </Button>
-      </div>
+      </div> */}
 
       <PublicPosts />
     </main>

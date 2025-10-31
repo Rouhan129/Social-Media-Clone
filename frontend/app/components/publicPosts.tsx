@@ -109,8 +109,8 @@ export default function PublicPosts() {
   if (error) return <div className="text-red-600 font-bold">{error}</div>;
 
   return (
-    <div className="flex flex-col items-center mt-10 gap-8 px-4">
-      <h1 className="text-2xl font-bold text-gray-800">Public Posts</h1>
+    <div className="flex flex-col items-center mt-2 gap-8 px-4">
+      {/* <h1 className="text-2xl font-bold text-gray-800">Public Posts</h1> */}
 
       {data.map((post) => (
         <div

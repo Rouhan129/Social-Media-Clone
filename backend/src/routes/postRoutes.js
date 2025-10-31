@@ -3,6 +3,7 @@ import Post from "../models/Post.js"
 import Comment from "../models/Comment.js"
 import upload from "../middleware/upload.js"
 import Follow from "../models/Follow.js";
+import Like from "../models/Like.js";
 import { protect } from "../middleware/auth.js"
 
 const router = express.Router()
@@ -32,12 +33,23 @@ router.post("/", protect, upload.single('image'), async (req, res) => {
 
 router.get('/', protect, async (req, res) => {
     try{
-        const posts = await Post.find({user: req.user.id})
-        res.status(200).json(posts)
+        const posts = await Post.find({ user: req.user.id }).sort({ createdAt: -1 }).populate('user', 'email')
+
+        const postWithLikes = await Promise.all(
+            posts.map(async (post) => {
+                const likesCount = await Like.countDocuments({postId: post._id})
+                const userLiked = await Like.exists({postId: post._id, userId: req.user.id})
+
+                return {...post.toObject(), likes: likesCount, isLikedByUser: userLiked}
+            })
+        )
+
+        res.status(200).json(postWithLikes)
     }catch(error){
         res.status(400).json({message: error.message})
     }
 })
+
 
 // Get All Posts
 router.get('/all', protect, async (req, res) => {

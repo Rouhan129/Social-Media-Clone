@@ -87,19 +87,13 @@ export default function UserPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 relative">
-      {/* Back button */}
-      <div className="absolute top-4 left-4">
-        <Button onClick={() => router.push("/")}>Home</Button>
-      </div>
 
-      {/* Profile Card */}
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-8 mb-10 text-center border border-gray-100">
         <div className="flex flex-col items-center">
           <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-3xl flex items-center justify-center font-semibold mb-4">
             {info.email[0].toUpperCase()}
           </div>
 
-          {/* Editable Email Section */}
           {editing ? (
             <div className="flex gap-2 items-center mb-4">
               <input
@@ -118,7 +112,6 @@ export default function UserPage() {
             </h2>
           )}
 
-          {/* Edit button for own profile */}
           {isOwnProfile && !editing && (
             <Button
               onClick={() => {
