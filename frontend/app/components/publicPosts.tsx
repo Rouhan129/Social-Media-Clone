@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { feedPosts, postComment, toggleLike, getLikesForPost } from "@/lib/post";
-import Button from "../components/Button";
+import { feedPosts, postComment, toggleLike } from "@/lib/post";
+import Button from "@/app/components/Button";
 
 interface User {
   _id: string;
@@ -32,6 +32,8 @@ export default function PublicPosts() {
   const [data, setData] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [commentData, setCommentData] = useState<{ [key: string]: string }>({});
+  const [replyData, setReplyData] = useState<{ [key: string]: string }>({});
+  const [replyVisible, setReplyVisible] = useState<{ [key: string]: boolean }>({});
 
   const handleComment = async (e: React.FormEvent, postId: string) => {
     e.preventDefault();
@@ -48,6 +50,26 @@ export default function PublicPosts() {
     }
   };
 
+  const handleReply = async (
+    e: React.FormEvent,
+    postId: string,
+    email: string
+  ) => {
+    e.preventDefault();
+    const text = replyData[`${postId}-${email}`];
+    if (!text) return;
+
+    try {
+      await postComment({ postId, text, parentComment: email });
+      const posts = await feedPosts();
+      setData(posts);
+      setReplyData((prev) => ({ ...prev, [`${postId}-${email}`]: "" }));
+      setReplyVisible((prev) => ({ ...prev, [`${postId}-${email}`]: false }));
+    } catch (err) {
+      console.error("Failed to post reply", err);
+    }
+  };
+
   const handleLike = async (postId: string) => {
     try {
       await toggleLike(postId);
@@ -59,32 +81,20 @@ export default function PublicPosts() {
   };
 
   useEffect(() => {
-    const fetchPostsWithLikes = async () => {
+    const fetchPosts = async () => {
       try {
         const posts = await feedPosts();
-
-        const postsWithLikes = await Promise.all(
-          posts.map(async (post) => {
-            const likeData = await getLikesForPost(post._id);
-            return {
-              ...post,
-              likes: likeData.likes || 0,
-              isLikedByUser: likeData.isLikedByUser || false,
-            };
-          })
-        );
-
-        setData(postsWithLikes);
+        setData(posts);
       } catch (err) {
         console.error(err);
-        setError("Failed to load posts with likes");
+        setError("Failed to load posts");
       }
     };
 
-    fetchPostsWithLikes();
+    fetchPosts();
   }, []);
 
-  if (error) return <div className="text-red-600 font-bold">ERROR!</div>;
+  if (error) return <div className="text-red-600 font-bold">{error}</div>;
 
   return (
     <div className="flex flex-col items-center mt-10 gap-8 px-4">
@@ -121,10 +131,12 @@ export default function PublicPosts() {
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                {post.isLikedByUser ? "♥ Liked" : "♡ Like"} ({post.likes})
+                {post.isLikedByUser ? "Liked" : "Likes"}{" "}
+                {post.likes > 0 ? `(${post.likes})` : "(0)"}
               </button>
             </div>
 
+            {/* COMMENT FORM */}
             <form
               onSubmit={(e) => handleComment(e, post._id)}
               className="mt-4 space-y-2"
@@ -150,6 +162,7 @@ export default function PublicPosts() {
             </form>
           </div>
 
+          {/* RIGHT SIDE — Comments */}
           <div className="w-full md:w-1/2 bg-gray-50 p-5 overflow-y-auto max-h-[500px]">
             <h3 className="font-semibold text-gray-800 mb-3">Comments</h3>
 
@@ -163,7 +176,58 @@ export default function PublicPosts() {
                     <p className="text-sm text-gray-600 mb-1">
                       <span className="font-medium">{comment.userId.email}</span>
                     </p>
+
+                    {/* Render reply tag if exists */}
+                    {comment.parentComment && (
+                      <p className="text-sm text-blue-600 mb-1">
+                        @{comment.parentComment}
+                      </p>
+                    )}
+
                     <p className="text-gray-800">{comment.text}</p>
+
+                    {/* Reply Button */}
+                    <button
+                      className="text-xs text-blue-600 mt-1 hover:underline"
+                      onClick={() =>
+                        setReplyVisible((prev) => ({
+                          ...prev,
+                          [`${post._id}-${comment.userId.email}`]:
+                            !prev[`${post._id}-${comment.userId.email}`],
+                        }))
+                      }
+                    >
+                      Reply
+                    </button>
+
+                    {/* Reply Input */}
+                    {replyVisible[`${post._id}-${comment.userId.email}`] && (
+                      <form
+                        onSubmit={(e) =>
+                          handleReply(e, post._id, comment.userId.email)
+                        }
+                        className="mt-2 space-y-1"
+                      >
+                        <textarea
+                          placeholder={`Reply to ${comment.userId.email}...`}
+                          rows={2}
+                          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                          value={replyData[`${post._id}-${comment.userId.email}`] || ""}
+                          onChange={(e) =>
+                            setReplyData((prev) => ({
+                              ...prev,
+                              [`${post._id}-${comment.userId.email}`]: e.target.value,
+                            }))
+                          }
+                        />
+                        <Button
+                          type="submit"
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm py-1"
+                        >
+                          Send Reply
+                        </Button>
+                      </form>
+                    )}
                   </div>
                 ))}
               </div>

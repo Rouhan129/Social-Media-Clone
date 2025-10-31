@@ -88,7 +88,7 @@ export const getLikesForPost = async (postId: string) => {
             throw new Error("Failed to fetch likes");
         }
 
-        return await res.json(); // { postId, likes }
+        return await res.json();
     } catch (error) {
         console.error("Error fetching likes:", error);
         throw error;

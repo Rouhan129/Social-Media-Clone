@@ -23,12 +23,21 @@ router.post("/", protect, async (req, res) => {
   }
 });
 
-router.get("/:postId", async (req, res) => {
+router.get("/:postId", protect, async (req, res) => {
   try {
     const { postId } = req.params;
+    const userId = req.user._id;
+
     const count = await Like.countDocuments({ postId });
-    res.json({ postId, likes: count });
+    const isLiked = await Like.exists({ postId, userId });
+
+    res.json({
+      postId,
+      likes: count,
+      isLikedByUser: !!isLiked,
+    });
   } catch (error) {
+    console.error("Error fetching likes:", error);
     res.status(500).json({ error: "Failed to fetch likes" });
   }
 });
