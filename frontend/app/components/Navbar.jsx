@@ -42,7 +42,7 @@ const Navbar = () => {
               <button
                 key={item.name}
                 onClick={() => router.push(item.href)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition cursor-pointer ${
                   isActive
                     ? "bg-white text-black shadow-lg"
                     : "bg-blue-600/60 text-white hover:bg-blue-700"
@@ -56,7 +56,7 @@ const Navbar = () => {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-red-500 text-white hover:bg-red-600 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-full font-medium bg-red-500 text-white hover:bg-red-600 transition cursor-pointer"
           >
             <IoLogOut size={18} />
             Logout
@@ -74,7 +74,7 @@ const Navbar = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-gradient-to-r from-gray-100 to-blue-500 border-t border-blue-300 py-3 space-y-3 animate-slide-down rounded-b-2xl">
+        <div className="md:hidden bg-gradient-to-r from-gray-100 to-blue-500 border-t border-blue-300 py-3 space-y-3 animate-slide-down rounded-full">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -88,7 +88,7 @@ const Navbar = () => {
                   isActive
                     ? "bg-blue-700 text-white"
                     : "text-white hover:bg-blue-600/70"
-                } rounded-lg transition`}
+                } rounded-full transition`}
               >
                 {item.icon}
                 {item.name}
@@ -101,7 +101,7 @@ const Navbar = () => {
               handleLogout();
               setIsOpen(false);
             }}
-            className="w-full text-left flex items-center gap-2 px-6 py-2 font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
+            className="w-full text-left flex items-center gap-2 px-6 py-2 font-medium text-white bg-red-500 hover:bg-red-600 rounded-full transition cursor-pointer"
           >
             <IoLogOut size={18} />
             Logout

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
-import Button from "../components/Button";
 import { useRouter } from "next/navigation";
 import { getFollowedUsers, getMessages } from "@/lib/messages";
 
@@ -144,21 +143,21 @@ export default function MessagesPage() {
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
       {/* Left Sidebar */}
       <div className="w-full md:w-80 bg-white border-r border-gray-300 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-2 ml-4">
           <h2 className="text-2xl font-bold text-blue-700">Messages</h2>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {followedUsers.length === 0 ? (
             <p className="text-center text-gray-500 mt-8">
-              No conversations yet.
+              Follow someone to start messaging!
             </p>
           ) : (
             followedUsers.map((user) => (
               <div
                 key={user._id}
                 onClick={() => setSelectedUser(user)}
-                className={`flex items-center p-4 cursor-pointer transition rounded-xl mx-2 my-1 ${
+                className={`flex items-center p-4 cursor-pointer transition rounded-full mx-2 my-1 ${
                   selectedUser?._id === user._id
                     ? "bg-blue-100 text-blue-800"
                     : "hover:bg-gray-50"
@@ -216,7 +215,7 @@ export default function MessagesPage() {
             </div>
 
             {/* Input Area */}
-            <div className="bg-white p-3 md:p-4 border-t flex items-center gap-2 sticky bottom-0">
+            <div className="bg-white p-3 md:p-4 border-t border-blue-800 flex items-center gap-2 sticky bottom-0">
               <input
                 type="text"
                 value={input}
@@ -229,7 +228,7 @@ export default function MessagesPage() {
                 onClick={handleSend}
                 className="px-4 md:px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition shadow-sm"
               >
-                Send
+                Send 
               </button>
             </div>
           </>
